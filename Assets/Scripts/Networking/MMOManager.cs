@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class MMOManager : NetworkManager {
+public class MMOManager : NetworkManager
+{
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	public override void OnClientConnect(NetworkConnection connection)
+	{
+		base.OnClientConnect(connection);
+
+		Debug.Log(connection.connectionId + " has connected!");
 	}
 }

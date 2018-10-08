@@ -20,6 +20,7 @@ public class Handler : MonoBehaviour
 
     [SerializeField] private GameObject networkManagerPrefab;
     [SerializeField] private int[] defaultPorts;
+    [SerializeField] private string[] serverScenes;
 
     private MMOManager networkManager;
 
@@ -49,7 +50,7 @@ public class Handler : MonoBehaviour
         else
         {
             // Load default offline client scene.
-            SceneManager.LoadScene("Offline");
+            SceneManager.LoadScene("ClientOffline");
         }
     }
 
@@ -91,12 +92,25 @@ public class Handler : MonoBehaviour
         Debug.LogWarning("Empty MMORPG Server");
         Debug.Log("ID: " + serverID.ToString() + " - Port: " + serverPort.ToString() + "\n");
 
-        Debug.Log("Starting server...");
+        Debug.Log("Starting server (" + serverScenes[serverID] + ")...");
 
         // Load our offline scene.
         SceneManager.LoadScene("Offline");
 
-        
+        // Instantiate network manager
+        GameObject networkManagerObject = Instantiate(networkManagerPrefab);
+
+        // Get network manager component.
+        networkManager = networkManagerObject.GetComponent<MMOManager>();
+
+        // Assign values to network manager.
+        networkManager.networkPort = serverPort;
+        networkManager.onlineScene = serverScenes[serverID];
+
+        // Start networked server.
+        networkManager.StartServer();
+
+        Debug.Log("Network manager spawned and server was started!");
     }
 
     void OnInputText(string obj)
