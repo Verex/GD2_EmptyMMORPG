@@ -6,10 +6,8 @@ using UnityEngine.Networking;
 public class MMOManager : NetworkManager
 {
 
-	public override void OnClientConnect(NetworkConnection connection)
+	public override void OnServerConnect(NetworkConnection connection)
 	{
-		base.OnClientConnect(connection);
-
-		Debug.Log(connection.connectionId + " has connected!");
+		Debug.LogAssertion(connection.connectionId + " has connected!");
 	}
 }

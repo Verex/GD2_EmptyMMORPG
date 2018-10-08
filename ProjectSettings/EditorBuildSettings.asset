@@ -15,6 +15,12 @@ EditorBuildSettings:
     path: Assets/Scenes/ClientOffline.unity
     guid: f1da44e866956a347a060623aacdbec0
   - enabled: 1
-    path: Assets/Scenes/OnlineLevel0.unity
+    path: Assets/Scenes/OnlineScenes/OnlineLevel0.unity
     guid: 648484e7c0a43674da2ef23919856dae
+  - enabled: 1
+    path: Assets/Scenes/OnlineScenes/OnlineLevel1.unity
+    guid: 57a9cc6bca760c740a03fcb82e30ced1
+  - enabled: 1
+    path: Assets/Scenes/OnlineScenes/OnlineLevel2.unity
+    guid: fef671c9e16756a43abec6fb37796d5f
   m_configObjects: {}

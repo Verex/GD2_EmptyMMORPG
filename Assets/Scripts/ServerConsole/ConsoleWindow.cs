@@ -13,10 +13,8 @@ namespace Windows
 
         public void Initialize()
         {
-			if (!AttachConsole(0x0ffffffff))
-			{
-				AllocConsole();
-			}
+            // AttachConsole(0x0ffffffff)
+			AllocConsole();
 
 			try
 			{

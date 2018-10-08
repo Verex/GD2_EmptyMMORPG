@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -298,12 +298,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkManagerPrefab: {fileID: 1912785234788946, guid: 119610ac2646fac499041be1b42893d9,
     type: 2}
-  defaultPorts: fb090000fc090000fd090000
-  serverScenes:
-  - OnlineLevel0
-  - 
-  - 
   serverConfigurations:
-  - name: Online Level 0
+  - name: Online Level 1
     port: 2555
     onlineSceneName: OnlineLevel0
+  - name: Online Level 2
+    port: 2556
+    onlineSceneName: OnlineLevel1
+  - name: Online Level 3
+    port: 2557
+    onlineSceneName: OnlineLevel2

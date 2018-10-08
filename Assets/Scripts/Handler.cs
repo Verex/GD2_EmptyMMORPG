@@ -5,26 +5,63 @@ using System;
 using System.IO;
 using UnityEngine.SceneManagement;
 
-public class Handler : MonoBehaviour
+public class Handler : MonoSingleton<Handler>
 {
+    protected Handler() { }
+
+    bool customPort = false;
+
+    public int serverID;
+    int serverPort;
+
+    public MMOManager networkManager;
+
+    [SerializeField] private GameObject networkManagerPrefab;
+    [SerializeField] public List<ServerConfiguration> serverConfigurations;
+
+
+    public static MMOManager NetworkManager
+    {
+        get
+        {
+            return Handler.Instance.networkManager;
+        }
+    }
+
+    public static int ServerID
+    {
+        get
+        {
+            return Handler.Instance.serverID;
+        }
+    }
+
+    public static List<ServerConfiguration> ServerConfigurations
+    {
+        get
+        {
+            return Handler.Instance.serverConfigurations;
+        }
+    }
+
+
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
 
     Windows.ConsoleWindow console = new Windows.ConsoleWindow();
     Windows.ConsoleInput input = new Windows.ConsoleInput();
 
     bool isConsoleServer = false;
-    bool customPort = false;
 
-    int serverID;
-    int serverPort;
-
-    [SerializeField] private GameObject networkManagerPrefab;
-    [SerializeField] private List<ServerConfiguration> serverConfigurations;
-
-    private MMOManager networkManager;
-
-    void Awake()
+    void Start()
     {
+        // Mark object to not be destroyed.
+        DontDestroyOnLoad(gameObject);
+
         string[] args = System.Environment.GetCommandLineArgs();
 
         for (int i = 0; i < args.Length; i++)
@@ -51,14 +88,23 @@ public class Handler : MonoBehaviour
         {
             // Load default offline client scene.
             SceneManager.LoadScene("ClientOffline");
+
+            // Instantiate network manager
+            GameObject networkManagerObject = Instantiate(networkManagerPrefab);
+
+            // Get network manager component.
+            networkManager = networkManagerObject.GetComponent<MMOManager>();
+
+            // Assign values to network manager.
+            networkManager.networkPort = serverConfigurations[0].port;
+
+            // Start client.
+            networkManager.StartClient();
         }
     }
 
     void StartConsoleServer()
     {
-        // Mark object to not be destroyed.
-        DontDestroyOnLoad(gameObject);
-
         // Initialize our console.
         console.Initialize();
 
@@ -94,6 +140,9 @@ public class Handler : MonoBehaviour
             // Assign default port.
             serverPort = config.port;
         }
+
+        // Assign title for configuration.
+        console.SetTitle("(MMO) - " + config.name);
 
         Debug.LogWarning("Empty MMO RPG Server ~ " + config.name);
 
@@ -156,8 +205,10 @@ public class Handler : MonoBehaviour
         }
     }
 
-    void OnDestroy()
+    public new void OnDestroy()
     {
+        base.OnDestroy();
+
         if (isConsoleServer)
         {
             console.Shutdown();
