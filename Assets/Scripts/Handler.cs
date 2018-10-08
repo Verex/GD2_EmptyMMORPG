@@ -19,8 +19,7 @@ public class Handler : MonoBehaviour
     int serverPort;
 
     [SerializeField] private GameObject networkManagerPrefab;
-    [SerializeField] private int[] defaultPorts;
-    [SerializeField] private string[] serverScenes;
+    [SerializeField] private List<ServerConfiguration> serverConfigurations;
 
     private MMOManager networkManager;
 
@@ -42,6 +41,7 @@ public class Handler : MonoBehaviour
             }
         }
 
+        // Check if trying to start server.
         if (isConsoleServer)
         {
             // Start console server.
@@ -62,8 +62,8 @@ public class Handler : MonoBehaviour
         // Initialize our console.
         console.Initialize();
 
-        // Set console title.
-        console.SetTitle("Empty MMORPG Server");
+        // Set initial console title.
+        console.SetTitle("Server");
 
         // Add input listener.
         input.OnInputText += OnInputText;
@@ -71,28 +71,35 @@ public class Handler : MonoBehaviour
         // Add output listener.
         Application.logMessageReceived += HandleLog;
 
-        // Handle server IDs.
-        switch (serverID)
+        // Check for invalid server configuration.
+        if (!(serverID >= 0 && serverID < serverConfigurations.Count))
         {
-            case 0:
+            Debug.LogError("Invalid server configuration ID.");
+            return;
+        }
 
-                break;
-            default:
-                Debug.LogError("Invalid server ID parameter...");
-                return;
+        // Get server configuration for ID.
+        ServerConfiguration config = serverConfigurations[serverID];
+
+        // Make sure configuration is not empty.
+        if (config == null)
+        {
+            Debug.LogError("Server configuration not valid (ID: " + serverID + ").");
+            return;
         }
 
         // Check for custom port.
         if (!customPort)
         {
             // Assign default port.
-            serverPort = defaultPorts[serverID];
+            serverPort = config.port;
         }
 
-        Debug.LogWarning("Empty MMORPG Server");
-        Debug.Log("ID: " + serverID.ToString() + " - Port: " + serverPort.ToString() + "\n");
+        Debug.LogWarning("Empty MMO RPG Server ~ " + config.name);
 
-        Debug.Log("Starting server (" + serverScenes[serverID] + ")...");
+        Debug.Log("Configuration ID: " + serverID.ToString() + " on Port: " + serverPort.ToString());
+
+        Debug.Log("Starting server scene \"" + config.onlineSceneName + "\"");
 
         // Load our offline scene.
         SceneManager.LoadScene("Offline");
@@ -105,12 +112,13 @@ public class Handler : MonoBehaviour
 
         // Assign values to network manager.
         networkManager.networkPort = serverPort;
-        networkManager.onlineScene = serverScenes[serverID];
+        networkManager.onlineScene = config.onlineSceneName;
 
-        // Start networked server.
-        networkManager.StartServer();
-
-        Debug.Log("Network manager spawned and server was started!");
+        // Attempt to start network manager server.
+        if (networkManager.StartServer())
+        {
+            Debug.Log("Network manager spawned and server was started!");
+        }
     }
 
     void OnInputText(string obj)
@@ -124,6 +132,8 @@ public class Handler : MonoBehaviour
             System.Console.ForegroundColor = ConsoleColor.Yellow;
         else if (type == LogType.Error)
             System.Console.ForegroundColor = ConsoleColor.Red;
+        else if (type == LogType.Assert)
+            System.Console.ForegroundColor = ConsoleColor.Cyan;
         else
             System.Console.ForegroundColor = ConsoleColor.White;
 
