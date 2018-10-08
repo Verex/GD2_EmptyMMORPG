@@ -12,45 +12,96 @@ public class Handler : MonoBehaviour
     Windows.ConsoleWindow console = new Windows.ConsoleWindow();
     Windows.ConsoleInput input = new Windows.ConsoleInput();
 
-    bool consoleCreated = false;
+    bool isConsoleServer = false;
+    bool customPort = false;
+
+    int serverID;
+    int serverPort;
+
+    [SerializeField] private GameObject networkManagerPrefab;
+    [SerializeField] private int[] defaultPorts;
+
+    private MMOManager networkManager;
 
     void Awake()
     {
         string[] args = System.Environment.GetCommandLineArgs();
-        string inputString = "";
+
         for (int i = 0; i < args.Length; i++)
         {
-            Debug.Log("ARG " + i + ": " + args[i]);
             if (args[i] == "-mserver")
             {
-                StartConsoleServer();
+                // Try to get server ID.
+                isConsoleServer = Int32.TryParse(args[i + 1], out serverID);
+            }
+            else if (args[i] == "-mport")
+            {
+                // Try to get server ID.
+                customPort = Int32.TryParse(args[i + 1], out serverPort);
             }
         }
 
-		if (!consoleCreated)
-		{
-			SceneManager.LoadScene("Offline");
-		}
+        if (isConsoleServer)
+        {
+            // Start console server.
+            StartConsoleServer();
+        }
+        else
+        {
+            // Load default offline client scene.
+            SceneManager.LoadScene("Offline");
+        }
     }
 
     void StartConsoleServer()
     {
-		consoleCreated = true;
+        // Mark object to not be destroyed.
         DontDestroyOnLoad(gameObject);
 
+        // Initialize our console.
         console.Initialize();
-        console.SetTitle("MMORPG Server");
 
+        // Set console title.
+        console.SetTitle("Empty MMORPG Server");
+
+        // Add input listener.
         input.OnInputText += OnInputText;
 
+        // Add output listener.
         Application.logMessageReceived += HandleLog;
 
-        Debug.Log("Server started!");
+        // Handle server IDs.
+        switch (serverID)
+        {
+            case 0:
+
+                break;
+            default:
+                Debug.LogError("Invalid server ID parameter...");
+                return;
+        }
+
+        // Check for custom port.
+        if (!customPort)
+        {
+            // Assign default port.
+            serverPort = defaultPorts[serverID];
+        }
+
+        Debug.LogWarning("Empty MMORPG Server");
+        Debug.Log("ID: " + serverID.ToString() + " - Port: " + serverPort.ToString() + "\n");
+
+        Debug.Log("Starting server...");
+
+        // Load our offline scene.
+        SceneManager.LoadScene("Offline");
+
+        
     }
 
     void OnInputText(string obj)
     {
-        //ConsoleSystem.Run(obj, true);
+        // HANDLE CONSOLE INPUT.
     }
 
     void HandleLog(string message, string stackTrace, LogType type)
@@ -75,7 +126,7 @@ public class Handler : MonoBehaviour
 
     void Update()
     {
-        if (consoleCreated)
+        if (isConsoleServer)
         {
             input.Update();
         }
@@ -83,7 +134,7 @@ public class Handler : MonoBehaviour
 
     void OnDestroy()
     {
-        if (consoleCreated)
+        if (isConsoleServer)
         {
             console.Shutdown();
         }
