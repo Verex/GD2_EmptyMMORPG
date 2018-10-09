@@ -139,12 +139,15 @@ public class Player : NetworkBehaviour
     public override void OnStartClient()
     {
         // Create floating text.
-        GameObject textObject = Instantiate(nameTextPrefab, new Vector3(0, 2.5f, 0), Quaternion.identity);
+        GameObject textObject = Instantiate(nameTextPrefab, transform.position + new Vector3(0, 2.5f, 0), Quaternion.identity);
 
         // Make object child of this.
         textObject.transform.parent = transform;
 
         // Get text name component.
         nameText = textObject.GetComponent<NameText>();
+
+        // Set initial state of name.
+        nameText.SetText(serverName);
     }
 }

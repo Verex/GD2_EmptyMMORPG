@@ -1812,7 +1812,7 @@ Rigidbody:
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 1
+  m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!95 &95809838229895782
@@ -1852,7 +1852,7 @@ MonoBehaviour:
   m_MovementTheshold: 0.001
   m_VelocityThreshold: 0.0001
   m_SnapThreshold: 5
-  m_InterpolateRotation: 1
+  m_InterpolateRotation: 5.5
   m_InterpolateMovement: 1
 --- !u!114 &114677081672172882
 MonoBehaviour:
@@ -1903,7 +1903,7 @@ MonoBehaviour:
     type: 2}
   characterTransform: {fileID: 0}
   movementSpeed: 10
-  rotationSpeed: 2
+  rotationSpeed: 6
 --- !u!136 &136453524716230782
 CapsuleCollider:
   m_ObjectHideFlags: 1
