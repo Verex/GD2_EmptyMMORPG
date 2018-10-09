@@ -40,8 +40,7 @@ public class Player : NetworkBehaviour
     [Command]
     public void CmdSetMovement(Vector2 movement)
     {
-        Rigidbody.velocity = transform.forward * movement.x * movementSpeed;
-        Rigidbody.angularVelocity = new Vector3(0, movement.y * rotationSpeed, 0);
+        this.movement = movement;
     }
 
     private IEnumerator NextConnection()
@@ -60,8 +59,22 @@ public class Player : NetworkBehaviour
             CmdSetMovement(movement);
 
             lastMovement = movement;
+        }
+    }
 
-            yield return new WaitForSeconds(0.1f);
+    private IEnumerator UpdatePlayer()
+    {
+        while (true)
+        {
+            Rigidbody.velocity = transform.forward * movement.x * movementSpeed;
+
+            if (movement.y != 0)
+            {
+                Quaternion deltaRotation = Quaternion.Euler(transform.up * movement.y * rotationSpeed);
+                transform.rotation = transform.rotation * deltaRotation;
+            }
+
+            yield return new WaitForSeconds(0.08f);
         }
     }
 
@@ -69,7 +82,9 @@ public class Player : NetworkBehaviour
     {
         if (isServer)
         {
-            serverName = "Testing";
+            serverName = "Player";
+
+            StartCoroutine(UpdatePlayer());
         }
 
         if (isLocalPlayer)
@@ -86,12 +101,33 @@ public class Player : NetworkBehaviour
         }
     }
 
+
     public void Update()
     {
         if (isLocalPlayer)
         {
-            movement.x = Mathf.Round(Input.GetAxis("Vertical"));
-            movement.y = Mathf.Round(Input.GetAxis("Horizontal"));
+            float x = Input.GetAxis("Vertical"),
+                y = Input.GetAxis("Horizontal");
+
+            if (Mathf.Abs(x) > 0.3f)
+            {
+                x = x / Mathf.Abs(x);
+            }
+            else
+            {
+                x = 0;
+            }
+
+            if (Mathf.Abs(y) > 0.3f)
+            {
+                y = y / Mathf.Abs(y);
+            }
+            else
+            {
+                y = 0;
+            }
+
+            movement = new Vector2(x, y);
         }
     }
 
