@@ -95,11 +95,7 @@ public class Handler : MonoSingleton<Handler>
             // Get network manager component.
             networkManager = networkManagerObject.GetComponent<MMOManager>();
 
-            // Assign values to network manager.
-            networkManager.networkPort = serverConfigurations[0].port;
-
-            // Start client.
-            networkManager.StartClient();
+            //networkManager.ConnectToServer(serverConfigurations[0]);
         }
     }
 
