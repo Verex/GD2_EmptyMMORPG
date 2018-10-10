@@ -19,9 +19,18 @@ public class MMOManager : NetworkManager
         }
     }
 
+    private IEnumerator WaitFindPlayerSpawns()
+    {
+        yield return new WaitForSeconds(1.0f);
+
+        FindPlayerSpawns();
+
+        yield break;
+    }
+
     public override void OnStartServer()
     {
-        FindPlayerSpawns();
+        StartCoroutine(WaitFindPlayerSpawns());
     }
 
     public override void OnServerConnect(NetworkConnection connection)
@@ -72,7 +81,7 @@ public class MMOManager : NetworkManager
     public void ClientMoveServer(int fromServerID, int serverID)
     {
         Handler.Instance.PlayerData.LastServerID = fromServerID;
-        
+
         StartCoroutine(ClientNextConnection(serverID));
     }
 }

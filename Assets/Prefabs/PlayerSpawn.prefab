@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4126581152231866}
   - component: {fileID: 114378812392405308}
+  - component: {fileID: 114130170411685444}
   m_Layer: 0
   m_Name: PlayerSpawn
   m_TagString: Untagged
@@ -40,6 +41,38 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &114130170411685444
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1541576885413818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 249
+    i1: 78
+    i2: 129
+    i3: 2
+    i4: 93
+    i5: 195
+    i6: 196
+    i7: 116
+    i8: 232
+    i9: 85
+    i10: 232
+    i11: 128
+    i12: 92
+    i13: 156
+    i14: 216
+    i15: 18
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!114 &114378812392405308
 MonoBehaviour:
   m_ObjectHideFlags: 1
