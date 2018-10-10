@@ -10,6 +10,8 @@ public class Handler : MonoSingleton<Handler>
     protected Handler() { }
 
     bool customPort = false;
+    public bool IsClient = false;
+    public PlayerData PlayerData;
 
     public int serverID;
     int serverPort;
@@ -86,6 +88,11 @@ public class Handler : MonoSingleton<Handler>
         }
         else
         {
+            IsClient = true;
+
+            // Set up player data.
+            PlayerData = new PlayerData("NULL", 0);
+
             // Load default offline client scene.
             SceneManager.LoadScene("ClientOffline");
 

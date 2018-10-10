@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 public class Player : NetworkBehaviour
 {
     [SyncVar(hook = "OnServerNameChange")] string serverName;
+    [SyncVar(hook = "OnScoreChange")] int score;
     [SerializeField] private GameObject nameTextPrefab;
     [SerializeField] private GameObject cameraPrefab;
     [SerializeField] private Transform characterTransform;
@@ -17,6 +18,7 @@ public class Player : NetworkBehaviour
 
     private NameText nameText;
     private Rigidbody rigidbody;
+    private Animator animator;
 
     public Rigidbody Rigidbody
     {
@@ -31,16 +33,45 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [TargetRpc]
-    public void TargetMoveToServer(NetworkConnection connection, int serverID)
+    public Animator Animator
     {
-        Handler.NetworkManager.ClientMoveServer(serverID);
+        get
+        {
+            if (animator == null)
+            {
+                animator = GetComponent<Animator>();
+            }
+
+            return animator;
+        }
+    }
+
+    [TargetRpc]
+    public void TargetMoveToServer(NetworkConnection connection, int fromServerID, int toServerID)
+    {
+        Handler.NetworkManager.ClientMoveServer(fromServerID, toServerID);
     }
 
     [Command]
     public void CmdSetMovement(Vector2 movement)
     {
         this.movement = movement;
+    }
+
+    [Command]
+    public void CmdSetPlayerData(string username, int score, int lastServerID)
+    {
+        // Assign client values.
+        serverName = username;
+        this.score = score;
+
+        if (Handler.NetworkManager.playerSpawns.ContainsKey(lastServerID))
+        {
+            Transform spawnPoint = Handler.NetworkManager.playerSpawns[lastServerID];
+
+            Rigidbody.MovePosition(spawnPoint.position);
+            transform.rotation = spawnPoint.rotation;
+        }
     }
 
     private IEnumerator NextConnection()
@@ -77,23 +108,36 @@ public class Player : NetworkBehaviour
             yield return new WaitForSeconds(0.08f);
         }
     }
+    
+    public void MoveToServer(int serverID)
+    {
+        TargetMoveToServer(connectionToClient, Handler.ServerID, serverID);
+    }
 
     public void Start()
     {
         if (isServer)
         {
-            serverName = "Player";
+            serverName = "NULL";
+            score = 0;
 
             StartCoroutine(UpdatePlayer());
         }
 
         if (isLocalPlayer)
         {
+            PlayerData data = Handler.Instance.PlayerData;
+
+            CmdSetPlayerData(data.Username, data.Score, data.LastServerID);
+
+            // Create our camera object for the player.
             GameObject cameraObject = Instantiate(cameraPrefab, Vector3.zero, Quaternion.identity);
 
+            // Force camera to follow player.
             SmoothFollow smoothFollow = cameraObject.GetComponent<SmoothFollow>();
             smoothFollow.target = transform;
 
+            // Assign movement vectors.
             movement = Vector2.zero;
             lastMovement = Vector2.zero;
 
@@ -129,11 +173,31 @@ public class Player : NetworkBehaviour
 
             movement = new Vector2(x, y);
         }
+
+        if (isClient)
+        {
+            float localVelocity = Vector3.Dot(Rigidbody.velocity, transform.forward);
+
+            // Check if we are moving.
+            if (Mathf.Abs(localVelocity) > 0.8f)
+            {
+                Animator.SetBool("IsMoving", true);
+            }
+            else
+            {
+                Animator.SetBool("IsMoving", false);
+            }
+        }
     }
 
     private void OnServerNameChange(string name)
     {
         nameText.SetText(name);
+    }
+
+    private void OnScoreChange(int score)
+    {
+        Debug.Log("score");
     }
 
     public override void OnStartClient()

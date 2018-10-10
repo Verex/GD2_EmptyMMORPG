@@ -5,6 +5,24 @@ using UnityEngine.Networking;
 
 public class MMOManager : NetworkManager
 {
+    public Dictionary<int, Transform> playerSpawns;
+
+    private void FindPlayerSpawns()
+    {
+        playerSpawns = new Dictionary<int, Transform>();
+
+        PlayerSpawn[] spawns = FindObjectsOfType<PlayerSpawn>();
+
+        foreach (PlayerSpawn spawn in spawns)
+        {
+            playerSpawns.Add(spawn.fromServerID, spawn.transform);
+        }
+    }
+
+    public override void OnStartServer()
+    {
+        FindPlayerSpawns();
+    }
 
     public override void OnServerConnect(NetworkConnection connection)
     {
@@ -51,8 +69,10 @@ public class MMOManager : NetworkManager
         StartClient();
     }
 
-    public void ClientMoveServer(int serverID)
+    public void ClientMoveServer(int fromServerID, int serverID)
     {
+        Handler.Instance.PlayerData.LastServerID = fromServerID;
+        
         StartCoroutine(ClientNextConnection(serverID));
     }
 }
