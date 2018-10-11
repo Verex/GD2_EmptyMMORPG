@@ -358,6 +358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61381b27e9b52d3469f9aba12ce83bf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsClient: 0
   serverID: 0
   networkManager: {fileID: 0}
   networkManagerPrefab: {fileID: 1912785234788946, guid: 119610ac2646fac499041be1b42893d9,

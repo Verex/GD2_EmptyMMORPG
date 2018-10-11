@@ -9,6 +9,7 @@ public class Player : NetworkBehaviour
     [SyncVar(hook = "OnScoreChange")] int score;
     [SerializeField] private GameObject nameTextPrefab;
     [SerializeField] private GameObject cameraPrefab;
+    [SerializeField] private GameObject gameUIPrefab;
     [SerializeField] private Transform characterTransform;
     [SerializeField] private float movementSpeed = 1.0f;
     [SerializeField] private float rotationSpeed = 1.0f;
@@ -19,6 +20,7 @@ public class Player : NetworkBehaviour
     private NameText nameText;
     private Rigidbody rigidbody;
     private Animator animator;
+    private GameUI gameUI;
 
     public Rigidbody Rigidbody
     {
@@ -72,6 +74,11 @@ public class Player : NetworkBehaviour
             Rigidbody.MovePosition(spawnPoint.position);
             transform.rotation = spawnPoint.rotation;
         }
+    }
+
+    public void AddScore(int amt)
+    {
+        score += amt;
     }
 
     private IEnumerator NextConnection()
@@ -197,7 +204,12 @@ public class Player : NetworkBehaviour
 
     private void OnScoreChange(int score)
     {
-        Debug.Log("score");
+        Handler.Instance.PlayerData.Score = score;
+        
+        if (gameUI != null)
+        {
+            gameUI.SetScoreText(score);
+        }
     }
 
     public override void OnStartClient()
@@ -213,5 +225,9 @@ public class Player : NetworkBehaviour
 
         // Set initial state of name.
         nameText.SetText(serverName);
+
+        GameObject gameUIObject = Instantiate(gameUIPrefab);
+
+        gameUI = gameUIObject.GetComponent<GameUI>();
     }
 }

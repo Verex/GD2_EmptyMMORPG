@@ -1901,9 +1901,11 @@ MonoBehaviour:
     type: 2}
   cameraPrefab: {fileID: 1027289557208402, guid: e50a2e43160f18249a95b80c2db1e01a,
     type: 2}
+  gameUIPrefab: {fileID: 1493243532700674, guid: d0eaf214e8cf2c14ead63d1885be66d8,
+    type: 2}
   characterTransform: {fileID: 0}
-  movementSpeed: 10
-  rotationSpeed: 6
+  movementSpeed: 9.5
+  rotationSpeed: 5.5
 --- !u!136 &136453524716230782
 CapsuleCollider:
   m_ObjectHideFlags: 1
